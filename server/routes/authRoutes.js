@@ -14,5 +14,6 @@ router.route("/users/:id").get(authController.getUser);
 router.delete("/users/:id", authController.deleteUser);
 router.route("/users").delete(authController.deleteUsers);
 router.route("/users").put(authController.updateUser);
+router.route("/users").put(authController.updateChecked);
 
 module.exports = router;

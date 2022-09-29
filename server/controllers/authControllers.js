@@ -107,6 +107,17 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+exports.updateChecked = async (req, res) => {
+  try {
+    const {} = req.body;
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error,
+    });
+  }
+};
+
 // User register and login
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {

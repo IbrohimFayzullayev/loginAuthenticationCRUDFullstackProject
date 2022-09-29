@@ -11,14 +11,22 @@ export default function Dashboard() {
   const [users, setUsers] = useState([]);
   const [checkVerify, setCheckVerify] = useState(true);
   const [checkedAll, setCheckedAll] = useState(false);
+  const [checkedUser, setCheckedUser] = useState([]);
+
+  // const getData = async () => {
+  //   const data = await axios.get("http://localhost:4000");
+  //   setUsers(data.data.data.users);
+  // };
+  const getData = async () => {
+    return await fetch("http://localhost:4000").then((res) => res.json());
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      const data = await axios.get("http://localhost:4000");
-      setUsers(data.data.data.users);
-    };
-    getData();
-  }, [checkVerify, checkedAll]);
+    getData().then((data) => {
+      console.log(data);
+      setUsers(data.data.users);
+    });
+  }, [checkVerify]);
 
   useEffect(() => {
     const verifyUser = async () => {
@@ -68,12 +76,47 @@ export default function Dashboard() {
   };
   const checkAll = (event) => {
     setCheckedAll(event.target.checked);
+    checkVerify ? setCheckVerify(false) : setCheckVerify(true);
+  };
+  const checkSomeUsers = (id, status) => {
+    if (checkedUser.includes(id)) {
+      const data = checkedUser.filter((item) => item !== id);
+      setCheckedUser([...data]);
+    } else {
+      setCheckedUser([...checkedUser, id]);
+    }
+    getData().then((data) => {
+      setUsers(data.data.users);
+    });
+    // checkVerify ? setCheckVerify(false) : setCheckVerify(true);
+  };
+  const deleteManyUsers = () => {
+    const remove = async () => {
+      await axios.delete("http://localhost:4000/users", {
+        headers: {},
+        data: {
+          deleteUsers: [...checkedUser],
+        },
+      });
+      getData().then((data) => {
+        setUsers(data.data.users);
+      });
+    };
+    if (checkedUser) {
+      remove();
+    }
+    checkVerify ? setCheckVerify(false) : setCheckVerify(true);
   };
   return (
     <>
       <div className="private">
         <div className="head_table d-flex justify-content-between">
-          <i className="bi bi-trash3-fill text-danger"></i>
+          <i
+            className="bi bi-trash3-fill text-danger"
+            onClick={() => {
+              deleteManyUsers();
+            }}
+          ></i>
           <button className="btn btn-warning" onClick={logOut}>
             Log Out
           </button>
@@ -88,6 +131,7 @@ export default function Dashboard() {
                     type="checkbox"
                     value=""
                     id="flexCheckDefault"
+                    defaultChecked={checkedUser.length > 1 ? "checked" : false}
                     onClick={(e) => {
                       checkAll(e);
                     }}
@@ -113,6 +157,9 @@ export default function Dashboard() {
                         value=""
                         id="flexCheckDefault"
                         defaultChecked={checkedAll ? "checked" : false}
+                        onClick={(e) => {
+                          checkSomeUsers(user.id, e.target.checked);
+                        }}
                       />
                     </td>
                     <th scope="row">{user.id}</th>
