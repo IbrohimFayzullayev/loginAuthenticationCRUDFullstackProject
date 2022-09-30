@@ -23,7 +23,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     getData().then((data) => {
-      console.log(data);
       setUsers(data.data.users);
     });
   }, [checkVerify]);
