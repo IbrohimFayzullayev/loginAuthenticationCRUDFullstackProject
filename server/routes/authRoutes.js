@@ -4,8 +4,7 @@ const authController = require("../controllers/authControllers");
 
 const router = require("express").Router();
 
-router.post("/", checkUser);
-router.route("/").get(authController.getAllUsers);
+router.post("/users", checkUser);
 router.post("/register", register);
 router.post("/login", login);
 router.route("/uzunligi").get(authController.getDataLength);

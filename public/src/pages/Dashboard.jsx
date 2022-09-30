@@ -13,18 +13,13 @@ export default function Dashboard() {
   const [checkedAll, setCheckedAll] = useState(false);
   const [checkedUser, setCheckedUser] = useState([]);
 
-  // const getData = async () => {
-  //   const data = await axios.get("http://localhost:4000");
-  //   setUsers(data.data.data.users);
-  // };
   const getData = async () => {
-    return await fetch("http://localhost:4000").then((res) => res.json());
+    const data = await axios.get("http://localhost:4000/users");
+    setUsers(data.data);
   };
 
   useEffect(() => {
-    getData().then((data) => {
-      setUsers(data.data.users);
-    });
+    getData();
   }, [checkVerify]);
 
   useEffect(() => {
@@ -33,7 +28,7 @@ export default function Dashboard() {
         navigate("/login");
       } else {
         const { data } = await axios.post(
-          "http://localhost:4000",
+          "http://localhost:4000/users",
           {},
           {
             withCredentials: true,
@@ -57,10 +52,12 @@ export default function Dashboard() {
       await axios
         .delete(`http://localhost:4000/users/${id}`, {})
         .then(() => {});
-      await axios.put("http://localhost:4000/users", {
-        id: users.length,
-        changeId: id,
-      });
+      if (users.length > 1) {
+        await axios.put("http://localhost:4000/users", {
+          id: users.length,
+          changeId: id,
+        });
+      }
     };
     remove();
 
@@ -84,9 +81,7 @@ export default function Dashboard() {
     } else {
       setCheckedUser([...checkedUser, id]);
     }
-    getData().then((data) => {
-      setUsers(data.data.users);
-    });
+    getData();
     // checkVerify ? setCheckVerify(false) : setCheckVerify(true);
   };
   const deleteManyUsers = () => {
@@ -97,9 +92,7 @@ export default function Dashboard() {
           deleteUsers: [...checkedUser],
         },
       });
-      getData().then((data) => {
-        setUsers(data.data.users);
-      });
+      getData();
     };
     if (checkedUser) {
       remove();
@@ -164,8 +157,8 @@ export default function Dashboard() {
                     <th scope="row">{user.id}</th>
                     <td>{user.username}</td>
                     <td>{user.email}</td>
-                    <td>29.09.2022</td>
-                    <td>{user.registerDate}</td>
+                    <td>{user.registerDate.substring(0, 5)}</td>
+                    <td>{user.registerDate.substring(10, 21)}</td>
                     <td
                       className={`${
                         user.active === "active"

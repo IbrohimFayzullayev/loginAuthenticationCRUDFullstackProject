@@ -16,7 +16,7 @@ function Login() {
   const [values, setValues] = useState({ email: "", password: "" });
   const generateError = (error) =>
     toast.error(error, {
-      position: "bottom-right",
+      position: "top-left",
     });
   const handleSubmit = async (event) => {
     event.preventDefault();

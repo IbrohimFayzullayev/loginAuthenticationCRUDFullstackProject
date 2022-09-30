@@ -187,7 +187,6 @@ module.exports.register = async (req, res, next) => {
 
 module.exports.login = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
   try {
     const user = await User.login(email, password);
     const token = createToken(user._id);
